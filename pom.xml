@@ -1,11 +1,21 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <parent>
+        <groupId>org.moksamedia.elastisearch.plugin</groupId>
+        <artifactId>TibetanAnalyzerPluginParent</artifactId>
+        <version>0.0.1</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+
     <modelVersion>4.0.0</modelVersion>
-    <groupId>io.bdrc.lucene</groupId>
-    <artifactId>lucene-bo</artifactId>
+
+    <groupId>org.moksamedia.elastisearch.plugin</groupId>
+    <artifactId>lucene-bo-andrew</artifactId>
     <packaging>jar</packaging>
     <version>1.6.0</version>
-    <name>lucene-bo</name>
+
+    <name>lucene-bo-andrew</name>
     <description>Tibetan Lucene analyzer and components</description>
     <url>https://github.com/BuddhistDigitalResourceCenter/lucene-bo</url>
     <licenses>
@@ -100,6 +110,12 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+            <version>7.13.0</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
     <profiles>

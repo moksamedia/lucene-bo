@@ -28,6 +28,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.CharArraySet;
@@ -97,8 +98,7 @@ public final class TibetanAnalyzer extends Analyzer {
      * @throws IOException
      *             if the file containing stopwords can't be opened
      */
-    public TibetanAnalyzer(boolean segmentInWords, String lemmatize, String normalize, String inputMethod,
-            String stopFilename, String lexiconFileName) throws IOException {
+    public TibetanAnalyzer(boolean segmentInWords, String lemmatize, String normalize, String inputMethod, String stopFilename, String lexiconFileName) throws IOException {
         this.segmentInWords = segmentInWords;
         this.lemmatize = lemmatize;
         this.normalize = normalize;
@@ -115,6 +115,7 @@ public final class TibetanAnalyzer extends Analyzer {
         this.lemmatizeVerbs = this.lemmatize.contains("verbs");
         this.lemmatizePaba = this.lemmatize.contains("paba");
         this.lemmatizeAffixes = this.lemmatize.contains("affix");
+
         if (stopFilename != null) {
             if (stopFilename.isEmpty()) {
                 InputStream stream = null;
@@ -127,11 +128,13 @@ public final class TibetanAnalyzer extends Analyzer {
                 } else {
                     this.tibStopSet = StopFilter.makeStopSet(getWordList(stream, "#"));
                 }
-            } else {
+            }
+            else {
                 this.tibStopSet = StopFilter.makeStopSet(getWordList(new FileInputStream(stopFilename), "#"));
             }
-        } else {
-            this.tibStopSet = null;
+        }
+        else {
+            this.tibStopSet = StopFilter.makeStopSet(Arrays.asList("ཏ","གི","ཀྱི","གིས","ཀྱིས","ཡིས","ཀྱང","སྟེ","ཏེ","མམ","རམ","སམ","ཏམ","ནོ","ཏོ","གིན","ཀྱིན","གྱིན","ཅིང","ཅིག","ཅེས","ཞེས"));
         }
         this.lexiconFileName = lexiconFileName;
     }

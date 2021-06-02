@@ -23,12 +23,15 @@ import java.io.DataInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Arrays;
 
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.apache.lucene.analysis.util.RollingCharBuffer;
+import org.elasticsearch.SpecialPermission;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,17 +90,33 @@ public final class TibWordTokenizer extends Tokenizer {
             ioBuffer.reset(input);
             return;
         }
-        InputStream stream = null;
-        stream = CommonHelpers.getResourceOrFile("bo-compiled-trie.dump");
-        if (stream == null) {
-            final String msg = "The default compiled Trie is not found. Either rebuild the Jar or run BuildCompiledTrie.main()"
-                    + "\n\tAborting...";
-            logger.error(msg);
-            throw new IOException(msg);
-        } else {
-            init(stream);
-            defaultTrie = scanner;
+
+        SecurityManager sm = System.getSecurityManager();
+        if (sm != null) {
+            sm.checkPermission(new SpecialPermission("java.lang.Runtime", "getClassLoader"));
+            sm.checkPermission(new SpecialPermission("java.io.FilePermission", "read"));
         }
+
+        AccessController.doPrivileged(new PrivilegedAction<Void>() {
+            public Void run() {
+                try {
+                    InputStream stream = null;
+                    stream = CommonHelpers.getResourceOrFile("bo-compiled-trie.dump");
+                    if (stream == null) {
+                        final String msg = "The default compiled Trie is not found. Either rebuild the Jar or run BuildCompiledTrie.main()"
+                            + "\n\tAborting...";
+                        logger.error(msg);
+                        throw new IOException(msg);
+                    } else {
+                        init(stream);
+                        defaultTrie = scanner;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        });
     }
 
     /**
